@@ -26,4 +26,27 @@ jobs:
           & $iscc DocMind.iss
           if ($LASTEXITCODE -ne 0) { throw 'Installer build failed' }
           Get-FileHash installer/DocMind-Setup.exe -Algorithm SHA256
-      # Intentionally no artifact upload or release until licensing is cleared.
+      - name: Package test downloads
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force test-downloads | Out-Null
+          Copy-Item installer/DocMind-Setup.exe test-downloads/
+          Compress-Archive -Path dist/DocMind -DestinationPath test-downloads/DocMind-Portable.zip -CompressionLevel Optimal
+          Get-ChildItem test-downloads -File | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          } | Set-Content test-downloads/SHA256SUMS.txt -Encoding ascii
+      - name: Retain restricted test artifacts
+        if: ${{ github.event.repository.private }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: DocMind-Windows-4.2.0-test
+          path: test-downloads/
+          retention-days: 7
+          if-no-files-found: error
+      - name: Explain public repository restriction
+        if: ${{ !github.event.repository.private }}
+        shell: pwsh
+        run: |
+          Write-Host "::warning::Test artifacts not uploaded: repository is public. Use a private repository until redistribution licensing is cleared."
+      # No automatic public releases. Private test access only pending license review.
