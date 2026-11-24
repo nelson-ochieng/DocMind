@@ -14,3 +14,8 @@ Before public binary distribution:
 - [ ] Publish release notes with limitations and label prerelease.
 
 An executable build is not a GUI smoke test or accuracy benchmark. Never upload private documents or model weights.
+
+## Download and test a private build
+The manual Windows build workflow packages the installer, portable ZIP and SHA256SUMS.txt. Upload is enabled only when the repository is private; public repositories skip upload pending licensing clearance. Artifacts expire after seven days. No GitHub release is created.
+
+After changing repository visibility to private (owner decision), run the Windows build workflow again and download DocMind-Windows-4.2.0-test from the successful run's Artifacts section. Extract the outer ZIP and verify the installer and portable ZIP with Get-FileHash -Algorithm SHA256 against SHA256SUMS.txt. Back up %LOCALAPPDATA%\\DocMind before installation. Keep Ollama running with llama3.2:3b and nomic-embed-text installed. Test launch, synthetic document ingestion, citations, exports, restart and uninstall. Extract the portable ZIP completely before launching DocMind.exe; keep its _internal directory. Builds are unsigned; verify provenance and scan locally. Do not bypass organizational security policy.
