@@ -1,0 +1,1 @@
+{"synthetic":true,"question":"What methodology did the authors use?","passages":[{"section":"literature review","text":"Previous researchers used aerial LiDAR."},{"section":"methodology","text":"We collected 30 field measurements using a total station."}],"expected":"30 field measurements using a total station","excluded":"Aerial LiDAR as an author method"}
