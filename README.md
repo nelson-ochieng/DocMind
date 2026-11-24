@@ -1,23 +1,42 @@
-# DocMind 4.0 — Research Studio (developer preview)
+# DocMind 4.2.0 — Developer preview
 
-Local desktop document assistant, upgraded from 3.0. No paid AI APIs. Windows 11 source setup:
-1. Extract ZIP into a new folder. Back up `%LOCALAPPDATA%\DocMind` before upgrading. Existing local database is shared with 3.0; remove and re-add documents to enable section metadata. Do not delete originals.
-2. Install Python 3.11 (python.org) and Ollama (ollama.com/download/windows). Start Ollama.
-3. Double-click SETUP_WINDOWS.bat. Wait for success.
-4. In PowerShell run `ollama pull llama3.2:3b` and `ollama pull nomic-embed-text`. Optionally `ollama pull qwen3:8b` if RAM permits. Model downloads need internet.
-5. Double-click START_DOCMIND.bat. Add documents in My documents. Select one paper or all documents in chat, choose an installed model, ask a question. Methodology, comparison, and analysis questions trigger three model calls. Allow several minutes on CPU.
-6. Click source links below answers to view the original passage and PDF page. Flowchart/Mind map buttons export an outline of cited answer lines; arrows do NOT establish actual sequence. Chart requires manually verified numeric input. Export report supports Word, PDF, text.
-7. For scanned PDFs install Tesseract OCR separately and add its installation folder to PATH, then restart DocMind. OCR is best effort for pages with no extracted text; mixed image/text pages may be incomplete. Re-add scanned files after installation.
-8. Run BUILD_WINDOWS.bat to create dist/DocMind/DocMind.exe. Keep the whole directory. Install Inno Setup 6, open DocMind.iss and compile (or run BUILD_INSTALLER.bat). Ollama, models and optional Tesseract remain separate prerequisites. Windows builds are untested here.
+Local desktop research assistant for PDF, DOCX and text documents. Ask questions, inspect cited evidence and export research notes using Ollama, Python, ChromaDB and Qt.
 
-## Research quality and limitations
-Section detection uses heading heuristics; BM25 and semantic reciprocal rank fusion select up to 18 passages for deep analysis. Evidence extraction, synthesis and model self-review are separate calls. Citation IDs are range-checked, not independently verified for entailment. Large documents are not exhaustively analyzed; context can truncate on small models. Conversation history is retained but follow-up context is not yet incorporated into the new engine. The visual tools produce evidence outlines, not verified dependency graphs or automatic numerical extraction. Hardware recommendation is RAM-based, not GPU benchmarking. OCR uses English defaults. PDF viewer shows cited page without highlight. No automatic diagram insertion into chat. Local files and chat history are not encrypted. Do not use as sole source for consequential research. PyMuPDF is AGPL/commercial dual-licensed; review dependency and model licenses before distribution. No installer or executable binary is included.
+[![Tests](https://github.com/nelson-ochieng/DocMind/actions/workflows/tests.yml/badge.svg)](https://github.com/nelson-ochieng/DocMind/actions/workflows/tests.yml)
 
-## Tests
-Run `.venv\Scripts\python.exe -m pip install -r requirements-dev.txt` then `.venv\Scripts\python.exe -m pytest -q`. Synthetic evaluation fixture checks distinction between prior work and authors' methods; mocked generation tests pipeline, not actual model accuracy. Live Ollama, ChromaDB integration, Windows GUI and installer need validation. Existing data excluded from archive.
+**Preview, not production-ready.** No paid AI API is required. Model and dependency downloads require internet. Local inference is the default; a custom Ollama endpoint may transmit document content.
 
-## 4.1 update (8 GB RAM)
-Keep a backup of your existing project and `%LOCALAPPDATA%\DocMind`. Extract this ZIP to a separate folder, run SETUP_WINDOWS.bat then START_DOCMIND.bat. Select llama3.2:3b (default); optional `ollama pull qwen3:4b`. Remove and re-add your original PDF to rebuild section metadata. Choose the specific paper before asking about methodology. Deep analysis runs sequentially and can take several minutes. The context is limited to 4096 tokens; batches are reduced separately, so answers may repeat. Citation IDs are checked, not semantic entailment. If citation generation fails, the app retries and then shows labeled original excerpts. Visuals remain evidence outlines, not verified causal graphs. No live Ollama or Windows build validation was performed. Original PDF extraction and section recognition were tested locally; the PDF is not distributed. Existing OCR, exports and build scripts remain available.
+## Quick start (Windows 11)
+1. Back up %LOCALAPPDATA%\DocMind if upgrading.
+2. Install [Python 3.11](https://www.python.org/downloads/) and [Ollama](https://ollama.com/download/windows).
+3. Clone this repository or download its source ZIP and extract it.
+4. Run SETUP_WINDOWS.bat. In PowerShell run:
+   ```powershell
+   ollama pull llama3.2:3b
+   ollama pull nomic-embed-text
+   # Optional: ollama pull qwen3:4b
+   ```
+5. Start Ollama and double-click START_DOCMIND.bat.
+6. Add a document, select it and ask a question. Re-index older documents after backing up.
 
-## 4.2 update
-The desktop Q&A path now requests schema-constrained JSON from Ollama, validates exact normalized quotations against indexed chunks, and renders only accepted records. This is extractive analysis, not independently verified paraphrased synthesis. Methodology category sequences are conceptual, not verified causal workflows. Inline citations open the existing source viewer. Limited Markdown and common Unicode math symbols are supported, not full LaTeX. Existing manual chart/diagram/report tools remain. Old conversation history is unchanged. Re-index documents after backing up. Use a recent Ollama version supporting JSON schema. Default llama3.2:3b; optional qwen3:4b. Run the existing setup/start scripts. 23 automated tests passed in Linux; actual 29-page research PDF extraction and mocked quote validation tested separately. Live inference, Windows GUI, Chroma integration and installer remain untested. No personal documents included.
+## Capabilities
+- Local document library, chat history, light and dark themes.
+- Section-aware retrieval and structured JSON evidence extraction.
+- Exact normalized quotation matching and clickable source references.
+- PDF page viewer, best-effort English OCR with separately installed Tesseract.
+- Manual chart, evidence-outline diagrams, Word/PDF/text report exports.
+
+Quotes are not proof of relevance or entailment. Answers are extractive, not comprehensive synthesis; visual outlines do not establish causality. Full LaTeX and automatic charts are not implemented. Local data is not encrypted. Do not use as the sole basis for consequential decisions.
+
+## Development
+Install requirements-dev.txt and run `python -m pytest -q` with Python 3.11. Tests use synthetic evidence and mocked inference; they do not establish live model accuracy. Windows GUI, installer and live database integration require independent validation.
+
+- [Architecture](docs/architecture.md)
+- [Windows build and release checklist](docs/release.md)
+- [Security](SECURITY.md)
+- [Contributing](CONTRIBUTING.md)
+- [Dependency licensing review](docs/licensing.md)
+- [Changelog](CHANGELOG.md)
+
+## License
+Project license not yet selected. Public visibility is not an open-source license. Binary redistribution is on hold pending dependency and model license review.
